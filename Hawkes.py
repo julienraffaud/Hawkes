@@ -92,7 +92,7 @@ def pp_plot(t, mu, alpha, beta):
     t = [round(i) for i in t]
     x = np.arange(0, t[-1], 0.01)
     y = [1 if (round(i) in t) else np.nan for i in x]
-    ci = [(cif(i)) for i in x]
+    ci = [(mu + sum(alpha*np.exp(-beta*(i - [j for j in t if j<i])))) for i in x]
     
     plt.figure(1, figsize=(9, 3))
     ax1 = plt.subplot(211)
