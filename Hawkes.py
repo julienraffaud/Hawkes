@@ -4,31 +4,31 @@ from scipy.optimize import minimize
 
 def cif(t, mu, alpha, beta):
     
-    " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
-    " The CIF has function:                                                               "
-    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
+    " Conditional intensity function.                      "
+    " The CIF has function:                                "
+    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))   "
     
     return mu + sum(alpha*np.exp(-beta*( np.subtract(t, range(int(round(t)))))))
 
 def simulate(T, mu, alpha, beta):
     
-    "Ogata modified thinning algorithm to simulate Hawkes processes                       "
+    "Ogata modified thinning algorithm to simulate Hawkes processes  "
 
     e = 10**(-10)
     P = []; t = 0
 
     while (t < T):
 
-        "find new upper bound M                                                           "
+        "find new upper bound M  "
         
         M = cif(t+e, mu, alpha, beta)
 
-        "generate next candidate point                                                    "
+        "generate next candidate point "
         
         E = np.exp(M)
         t += E
 
-        "accept it with some probability: U[0, M]                                         "
+        "accept it with some probability: U[0, M]  "
         
         U = np.random.uniform(0,M)
 
@@ -40,7 +40,7 @@ def simulate(T, mu, alpha, beta):
 
 def pp_plot(t, mu, alpha, beta):
     
-    "Plot the point process and conditional intensity function lambda*(t)                 "
+    "Plot the point process and conditional intensity function lambda*(t)  "
     
     t = [round(i) for i in t]
     x = np.arange(0, t[-1], 0.01)
@@ -94,8 +94,8 @@ def ll(params, beta, t, verbose=False):
 
 def mle(t, beta, verbose=False):
     
-    " Maximum-Likelihood Estimation for parameters mu & alpha                            "  
-    " given a sequence of observations and a beta parameter.                             "
+    " Maximum-Likelihood Estimation for parameters mu & alpha   "  
+    " given a sequence of observations and a beta parameter.    "
     
     
     "generate random parameter estimates"
@@ -110,4 +110,3 @@ def mle(t, beta, verbose=False):
     "return estimated mu & alpha"
     
     return res.x[0], res.x[1]
-
