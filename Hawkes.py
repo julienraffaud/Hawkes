@@ -64,7 +64,7 @@ def ll(params, beta, t, verbose=False):
         A[i] = np.exp(-beta*(t[i] - t[i-1]))*(1+A[i-1])
     s2 = sum(np.log(mu + alpha*A))
     
-    return (mu*t[-1] + s1 - s2)
+    return (mu*t[-1] - s1 - s2)
 
 def mle(t, beta, verbose=False):
     
