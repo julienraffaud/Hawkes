@@ -38,32 +38,6 @@ def simulate(T, mu, alpha, beta):
     
     return P
 
-def pp_plot(t, mu, alpha, beta):
-    
-    "Plot the point process and conditional intensity function lambda*(t)  "
-    
-    t = [round(i) for i in t]
-    x = np.arange(0, t[-1], 0.01)
-    y = [1 if (round(i) in t) else np.nan for i in x]
-    ci = [(cif(i)) for i in x]
-    
-    plt.figure(1, figsize=(9, 3))
-    ax1 = plt.subplot(211)
-    ax2 = plt.subplot(212, sharex = ax1)
-    
-    ax1.plot(x, ci)
-    ax1.set_ylabel(r'$\lambda$*(t)')
-    ax1.set_xlabel('T')
-    plt.tight_layout()
-    
-    ax2.plot(x, y, ".")
-    ax2.set_ylabel('Hawkes process')
-    ax2.set_xlabel('T')
-    ax2.set_xlim([0, t[-1]])
-
-    plt.show()
-
-
 def ll(params, beta, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
@@ -110,3 +84,28 @@ def mle(t, beta, verbose=False):
     "return estimated mu & alpha"
     
     return res.x[0], res.x[1]
+
+def pp_plot(t, mu, alpha, beta):
+    
+    "Plot the point process and conditional intensity function lambda*(t)  "
+    
+    t = [round(i) for i in t]
+    x = np.arange(0, t[-1], 0.01)
+    y = [1 if (round(i) in t) else np.nan for i in x]
+    ci = [(cif(i)) for i in x]
+    
+    plt.figure(1, figsize=(9, 3))
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212, sharex = ax1)
+    
+    ax1.plot(x, ci)
+    ax1.set_ylabel(r'$\lambda$*(t)')
+    ax1.set_xlabel('T')
+    plt.tight_layout()
+    
+    ax2.plot(x, y, ".")
+    ax2.set_ylabel('Hawkes process')
+    ax2.set_xlabel('T')
+    ax2.set_xlim([0, t[-1]])
+
+    plt.show()
