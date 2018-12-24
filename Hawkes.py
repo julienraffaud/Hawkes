@@ -42,7 +42,7 @@ def simulate(T, mu, alpha, beta):
     return P
 
 
-def ll(params, beta, t, verbose=False):
+def ll(params, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
     " The function is:                                                                    "
@@ -55,7 +55,7 @@ def ll(params, beta, t, verbose=False):
     " s1 = alpha/beta*sum(exp(-beta*(t[k] - t[i])) - 1)                                   "
     " s2 = sum(log(mu + alpha*A[i]))                                                      "
     
-    mu, alpha = params[0], params[1]
+    mu, alpha, beta = params[0], params[1], params[2]
     
     " compute s1 "
     
@@ -71,7 +71,7 @@ def ll(params, beta, t, verbose=False):
     return (mu*t[-1] - s1 - s2)
 
 
-def mle(t, beta, verbose=False):
+def mle(t, verbose=False):
     
     " Maximum-Likelihood Estimation for parameters mu & alpha "  
     " given a sequence of observations and a beta parameter.  "
@@ -79,16 +79,16 @@ def mle(t, beta, verbose=False):
     
     "generate random parameter estimates"
     
-    params = np.random.uniform(0,1,size=2)
+    params = np.random.uniform(0,1,size=3)
     
     "minimize the negative log-likelihood function"
     
-    res = minimize(ll, params, args=(beta, t, verbose), method="L-BFGS-B",
+    res = minimize(ll, params, args=(t, verbose), method="L-BFGS-B",
                 options={"ftol": 1e-10, "maxls": 50, "maxcor":50, "maxiter":100000, "maxfun": 1000})
     
     "return estimated mu & alpha"
     
-    return res
+    return res.x[0], res.x[1], res.x[2]
 
 
 def pp_plot(t, mu, alpha, beta):
