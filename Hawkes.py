@@ -73,8 +73,8 @@ def ll(params, t, verbose=False):
 
 def mle(t, verbose=False):
     
-    " Maximum-Likelihood Estimation for parameters mu & alpha "  
-    " given a sequence of observations and a beta parameter.  "
+    " Maximum-Likelihood Estimation for HP parameters "  
+    " given a sequence of observations.               "
     
     
     "generate random parameter estimates"
@@ -86,7 +86,7 @@ def mle(t, verbose=False):
     res = minimize(ll, params, args=(t, verbose), method="L-BFGS-B",
                 options={"ftol": 1e-10, "maxls": 50, "maxcor":50, "maxiter":100000, "maxfun": 1000})
     
-    "return estimated mu & alpha"
+    "return estimated mu, alpha, beta"
     
     return res.x[0], res.x[1], res.x[2]
 
