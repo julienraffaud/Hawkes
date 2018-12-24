@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+
 def cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
@@ -9,6 +10,7 @@ def cif(t, P, mu, alpha, beta):
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
+
 
 def simulate(T, mu, alpha, beta):
     
@@ -38,6 +40,7 @@ def simulate(T, mu, alpha, beta):
 
     return P
 
+
 def ll(params, beta, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
@@ -66,6 +69,7 @@ def ll(params, beta, t, verbose=False):
     
     return (mu*t[-1] - s1 - s2)
 
+
 def mle(t, beta, verbose=False):
     
     " Maximum-Likelihood Estimation for parameters mu & alpha "  
@@ -84,6 +88,7 @@ def mle(t, beta, verbose=False):
     "return estimated mu & alpha"
     
     return res.x
+
 
 def pp_plot(t, mu, alpha, beta):
     
