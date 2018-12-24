@@ -2,40 +2,40 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
-def cif(t, mu, alpha, beta):
+def cif(t, P, mu, alpha, beta):
     
-    " Conditional intensity function.                      "
-    " The CIF has function:                                "
-    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))   "
+    " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
+    " The CIF has function:                                                               "
+    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
     
-    return mu + sum(alpha*np.exp(-beta*( np.subtract(t, range(int(round(t)))))))
+    return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
 
 def simulate(T, mu, alpha, beta):
     
-    "Ogata modified thinning algorithm to simulate Hawkes processes  "
+    "Ogata modified thinning algorithm to simulate Hawkes processes "
 
     e = 10**(-10)
-    P = []; t = 0
+    P = np.array([]); t = 0
 
     while (t < T):
 
-        "find new upper bound M  "
+        "find new upper bound M "
         
-        M = cif(t+e, mu, alpha, beta)
+        M = cif(t+e, P, mu, alpha, beta)
 
         "generate next candidate point "
         
         E = np.exp(M)
         t += E
 
-        "accept it with some probability: U[0, M]  "
+        "accept it with some probability: U[0, M] "
         
         U = np.random.uniform(0,M)
 
-        if (t < T) and (U <= cif(t, mu, alpha, beta)):
+        if (t < T) and (U <= cif(t, P, mu, alpha, beta)):
+            
+            P = np.append(P, t)
 
-            P.append(t)
-    
     return P
 
 def ll(params, beta, t, verbose=False):
@@ -60,7 +60,7 @@ def ll(params, beta, t, verbose=False):
     " compute s2 "
     
     A = np.zeros((len(t),1))
-    for i in range(2,len(t)):
+    for i in range(1,len(t)):
         A[i] = np.exp(-beta*(t[i] - t[i-1]))*(1+A[i-1])
     s2 = sum(np.log(mu + alpha*A))
     
@@ -68,33 +68,34 @@ def ll(params, beta, t, verbose=False):
 
 def mle(t, beta, verbose=False):
     
-    " Maximum-Likelihood Estimation for parameters mu & alpha   "  
-    " given a sequence of observations and a beta parameter.    "
+    " Maximum-Likelihood Estimation for parameters mu & alpha "  
+    " given a sequence of observations and a beta parameter.  "
     
     
     "generate random parameter estimates"
     
-    params = np.random.uniform (0,1,size=2)
+    params = np.random.uniform(0,1,size=2)
     
     "minimize the negative log-likelihood function"
     
     res = minimize(ll, params, args=(beta, t, verbose), method="L-BFGS-B",
-                options={"ftol": 1e-10, "maxls": 50, "maxcor":50, "maxiter":10000, "maxfun": 1000})
+                options={"ftol": 1e-10, "maxls": 50, "maxcor":50, "maxiter":100000, "maxfun": 1000})
     
     "return estimated mu & alpha"
     
-    return res.x[0], res.x[1]
+    return res.x
 
 def pp_plot(t, mu, alpha, beta):
     
-    "Plot the point process and conditional intensity function lambda*(t)  "
+    "Plot the point process and conditional intensity function lambda*(t) "
     
+    x = np.linspace(0, t[-1], 300)
+    ci = [cif(i, t, mu, alpha, beta) for i in x]
     t = [round(i) for i in t]
-    x = np.arange(0, t[-1], 0.01)
-    y = [1 if (round(i) in t) else np.nan for i in x]
-    ci = [(mu + sum(alpha*np.exp(-beta*(i - [j for j in t if j<i])))) for i in x]
+    xx = [round(i) for i in x]
+    xxx = [1 if (i in t) else np.nan for i in xx]
     
-    plt.figure(1, figsize=(9, 3))
+    plt.figure(1, figsize=(9, 4))
     ax1 = plt.subplot(211)
     ax2 = plt.subplot(212, sharex = ax1)
     
@@ -103,7 +104,7 @@ def pp_plot(t, mu, alpha, beta):
     ax1.set_xlabel('T')
     plt.tight_layout()
     
-    ax2.plot(x, y, ".")
+    ax2.scatter(x, xxx, edgecolors='white')
     ax2.set_ylabel('Hawkes process')
     ax2.set_xlabel('T')
     ax2.set_xlim([0, t[-1]])
