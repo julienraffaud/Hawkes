@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+
 def cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
