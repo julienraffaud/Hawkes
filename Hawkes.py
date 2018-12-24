@@ -113,6 +113,5 @@ def pp_plot(t, mu, alpha, beta):
     ax2.scatter(x, xxx, edgecolors='white')
     ax2.set_ylabel('Hawkes process')
     ax2.set_xlabel('T')
-    ax2.set_xlim([0, t[-1]])
 
     plt.show()
