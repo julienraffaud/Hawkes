@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 def cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
-    " The conditional intensity has function:                                                               "
+    " The conditional intensity has function:                                             "
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
