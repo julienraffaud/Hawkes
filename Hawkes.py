@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
-
 def cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
@@ -10,8 +9,6 @@ def cif(t, P, mu, alpha, beta):
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
-
-
 
 def simulate(T, mu, alpha, beta):
     
@@ -28,20 +25,18 @@ def simulate(T, mu, alpha, beta):
 
         "generate next candidate point "
         
-        E = np.exp(M)
+        E = -(1/M)*np.log(np.random.uniform(0, 1))
         t += E
 
         "accept it with some probability: U[0, M] "
         
-        U = np.random.uniform(0,M)
+        U = np.random.uniform(0, M)
 
         if (t < T) and (U <= cif(t, P, mu, alpha, beta)):
             
             P = np.append(P, t)
 
     return P
-
-
 
 def ll(params, beta, t, verbose=False):
     
@@ -71,8 +66,6 @@ def ll(params, beta, t, verbose=False):
     
     return (mu*t[-1] - s1 - s2)
 
-
-
 def mle(t, beta, verbose=False):
     
     " Maximum-Likelihood Estimation for parameters mu & alpha "  
@@ -90,18 +83,16 @@ def mle(t, beta, verbose=False):
     
     "return estimated mu & alpha"
     
-    return res.x
-
-
+    return res
 
 def pp_plot(t, mu, alpha, beta):
     
     "Plot the point process and conditional intensity function lambda*(t) "
     
-    x = np.linspace(0, t[-1], 300)
+    x = np.linspace(0, t[-1], 200)
     ci = [cif(i, t, mu, alpha, beta) for i in x]
-    t = [round(i) for i in t]
-    xx = [round(i) for i in x]
+    t = [round(i, 1) for i in t]
+    xx = [round(i, 1) for i in x]
     xxx = [1 if (i in t) else np.nan for i in xx]
     
     plt.figure(1, figsize=(9, 4))
@@ -112,7 +103,7 @@ def pp_plot(t, mu, alpha, beta):
     ax1.set_ylabel(r'$\lambda$*(t)')
     ax1.set_xlabel('T')
     plt.tight_layout()
-    
+        
     ax2.scatter(x, xxx, edgecolors='white')
     ax2.set_ylabel('Hawkes process')
     ax2.set_xlabel('T')
