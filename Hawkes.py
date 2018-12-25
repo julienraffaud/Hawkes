@@ -6,6 +6,7 @@ from scipy.optimize import minimize
 def cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
+    "                                                                                     "
     " The conditional intensity has function:                                             "
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
     
@@ -45,12 +46,15 @@ def simulate(T, mu, alpha, beta):
 def ll(params, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
+    "                                                                                     "
     " The function is:                                                                    "
     " ll = -t[k]*mu + alpha/beta*sum(exp(-beta*(t[k] - t[i])-1) + ...                     "
     "      sum(log(mu+alpha*A[i]))                                                        "
+    "                                                                                     "
     " with:                                                                               "
     " A[0] = 0                                                                            "
     " A[i] = exp(-beta*(t[i] - t[i-1])) * (1 + A[i-1])                                    "
+    "                                                                                     "
     " For computational efficiency here i compute the LL sums separately, defining:       "
     " s1 = alpha/beta*sum(exp(-beta*(t[k] - t[i])) - 1)                                   "
     " s2 = sum(log(mu + alpha*A[i]))                                                      "
@@ -73,7 +77,7 @@ def ll(params, t, verbose=False):
 
 def mle(t, verbose=False):
     
-    " Maximum-Likelihood Estimation for HP parameters "  
+    " Maximum-Likelihood Estimation for HP parameters, "  
     " given a sequence of observations.               "
     
     
