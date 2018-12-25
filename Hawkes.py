@@ -77,7 +77,7 @@ def ll(params, t, verbose=False):
 
 def mle(t, verbose=False):
     
-    " Maximum-Likelihood Estimation for HP parameters, "  
+    " Maximum-Likelihood Estimation for HP parameters "  
     " given a sequence of observations.               "
     
     
