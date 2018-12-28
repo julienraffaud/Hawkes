@@ -23,17 +23,14 @@ def simulate(T, mu, alpha, beta):
 
     while (t < T):
 
-        "find new upper bound M "
-        
+        # find new upper bound M
         M = cif(t+e, P, mu, alpha, beta)
 
-        "generate next candidate point "
-        
+        # generate next candidate point 
         E = -(1/M)*np.log(np.random.uniform(0, 1))
         t += E
 
-        "accept it with some probability: U[0, M] "
-        
+        # accept it with some probability: U[0, M]
         U = np.random.uniform(0, M)
 
         if (t < T) and (U <= cif(t, P, mu, alpha, beta)):
@@ -61,12 +58,10 @@ def ll(params, t, verbose=False):
     
     mu, alpha, beta = params[0], params[1], params[2]
     
-    " compute s1 "
-    
+    # compute s1 
     s1 = alpha/beta*sum(np.exp(-beta*(t[-1] - t))-1)
     
-    " compute s2 "
-    
+    # compute s2 
     A = np.zeros((len(t),1))
     for i in range(1,len(t)):
         A[i] = np.exp(-beta*(t[i] - t[i-1]))*(1+A[i-1])
@@ -81,17 +76,14 @@ def mle(t, verbose=False):
     " given a sequence of observations.               "
     
     
-    "generate random parameter estimates"
-    
+    # generate random parameter estimates
     params = np.random.uniform(0,1,size=3)
     
-    "minimize the negative log-likelihood function"
-    
+    # minimize the negative log-likelihood function
     res = minimize(ll, params, args=(t, verbose), method="L-BFGS-B",
                 options={"ftol": 1e-10, "maxls": 50, "maxcor":50, "maxiter":100000, "maxfun": 1000})
     
-    "return estimated mu, alpha, beta"
-    
+    # return estimated mu, alpha, beta
     return res.x[0], res.x[1], res.x[2]
 
 
