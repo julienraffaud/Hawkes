@@ -5,10 +5,15 @@ from scipy.optimize import minimize
 
 def cif(t, P, mu, alpha, beta):
     
-    " Conditional intensity function of a Hawkes process with parameters mu, alpha, beta. "
-    "                                                                                     "
-    " The conditional intensity has function:                                             "
-    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                  "
+    " Conditional intensity function of a Hawkes process with exponential kernel.                  "
+    "                                                                                              "
+    " The conditional intensity function is:                                                       "
+    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                           "
+    "                                                                                              "
+    " Parameters:                                                                                  "
+    " - mu corresponds to the baseline intensity of the HP.                                        "
+    " - alpha corresponds to the jump intensity, representing the jump in intensity upon arrival.  "
+    " - beta is the decay parameter, governing the exponential decay of intensity.                 "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
 
