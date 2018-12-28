@@ -19,7 +19,7 @@ def cif(t, P, mu, alpha, beta):
 
 
 
-def simulate(T, mu, alpha, beta):
+def univariate(T, mu, alpha, beta):
     
     "Ogata modified thinning algorithm to simulate Hawkes processes "
 
