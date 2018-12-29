@@ -26,19 +26,14 @@ def univariate_simulation(total_points, mu, alpha, beta):
     P = np.array([]); t = 0; b = 0
 
     while (b < total_points):
-
         # find new upper bound M
         M = cif(t+e, P, mu, alpha, beta)
-
         # generate next candidate point 
         E = -(1/M)*np.log(np.random.uniform(0, 1))
         t += E
-
         # accept it with some probability: U[0, M]
         U = np.random.uniform(0, M)
-
         if (b < total_points) and (U <= cif(t, P, mu, alpha, beta)):
-            
             P = np.append(P, t)
             b += 1
 
