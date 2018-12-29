@@ -5,7 +5,7 @@ from scipy.optimize import minimize
 
 def univariate_cif(t, P, mu, alpha, beta):
     
-    " Conditional intensity function of a Hawkes process with exponential kernel.                  "
+    " Conditional intensity function of a univariate Hawkes process with exponential kernel.       "
     "                                                                                              "
     " The conditional intensity function is:                                                       "
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                           "
