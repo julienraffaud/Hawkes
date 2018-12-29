@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 
-def cif(t, P, mu, alpha, beta):
+def univariate_cif(t, P, mu, alpha, beta):
     
     " Conditional intensity function of a Hawkes process with exponential kernel.                  "
     "                                                                                              "
@@ -19,7 +19,7 @@ def cif(t, P, mu, alpha, beta):
 
 
 
-def univariate(T, mu, alpha, beta):
+def univariate_simulation(T, mu, alpha, beta):
     
     "Ogata modified thinning algorithm to simulate Hawkes processes "
 
@@ -43,6 +43,48 @@ def univariate(T, mu, alpha, beta):
             P = np.append(P, t)
 
     return P
+
+
+def multivariate_cif(t, T, mu, alpha, beta):
+    
+    n = len(mu)
+    
+    for i in range(n):
+        
+        for j in range(n):
+            
+            mu[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, P[j][np.where(P[j]<t)])))
+    
+    return mu
+
+
+def multivariate_simulation(time, mu, alpha, beta):
+    
+    T = [np.array([]) for _ in range(len(mu))]
+    n = np.zeros((len(mu)))
+    e = .1
+    s = 0
+    
+    while (s < time):
+        
+        M = sum(multivariate_cif(s+e, T, mu, alpha, beta))
+        w = -np.log(np.random.uniform(0,1))/M
+        s += w
+        
+        D = np.random.uniform(0, 1)
+        
+        if (D*M <= sum(multivariate_cif(s, T, mu, alpha, beta))):
+            
+            k = 0
+            
+            while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):
+                            
+                k += 1
+        
+        n[k] += 1
+        T[k] = np.append(T[k], s)
+        
+    return T
 
 
 def ll(params, t, verbose=False):
