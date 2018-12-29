@@ -47,43 +47,39 @@ def univariate_simulation(T, mu, alpha, beta):
 
 def multivariate_cif(t, T, mu, alpha, beta):
     
-    n = len(mu)
-    
-    for i in range(n):
-        
-        for j in range(n):
+    for i in range(len(mu)):
+        for j in range(len(mu)):
+            mu[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, T[j][np.where(T[j]<t)])))
             
-            mu[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, P[j][np.where(P[j]<t)])))
-    
     return mu
 
 
-def multivariate_simulation(time, mu, alpha, beta):
-    
+def multivariate_simulation(total_events, mu, alpha, beta):
+        
     T = [np.array([]) for _ in range(len(mu))]
     n = np.zeros((len(mu)))
-    e = .1
-    s = 0
+    count = 0; s = 0
     
-    while (s < time):
+    while (count < total_points):
         
-        M = sum(multivariate_cif(s+e, T, mu, alpha, beta))
-        w = -np.log(np.random.uniform(0,1))/M
-        s += w
+        M = sum(multivariate_cif(s, T, mu, alpha, beta))
+        s += np.random.exponential(1/M) 
+  
+        D = np.random.uniform(0, M)
         
-        D = np.random.uniform(0, 1)
-        
-        if (D*M <= sum(multivariate_cif(s, T, mu, alpha, beta))):
-            
+        if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):
+                        
             k = 0
             
             while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):
                             
                 k += 1
         
-        n[k] += 1
-        T[k] = np.append(T[k], s)
-        
+            n[k] += 1
+            T[k] = np.append(T[k], s)
+            
+            count +=1
+                    
     return T
 
 
