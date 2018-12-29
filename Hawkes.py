@@ -18,15 +18,14 @@ def univariate_cif(t, P, mu, alpha, beta):
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
 
 
-
-def univariate_simulation(T, mu, alpha, beta):
+def univariate_simulation(total_count, mu, alpha, beta):
     
-    "Ogata modified thinning algorithm to simulate Hawkes processes "
+    "Ogata modified thinning algorithm to simulate univariate Hawkes processes "
 
     e = 10**(-10)
-    P = np.array([]); t = 0
+    P = np.array([]); t = 0; b = 0
 
-    while (t < T):
+    while (b < total_count):
 
         # find new upper bound M
         M = cif(t+e, P, mu, alpha, beta)
@@ -38,9 +37,10 @@ def univariate_simulation(T, mu, alpha, beta):
         # accept it with some probability: U[0, M]
         U = np.random.uniform(0, M)
 
-        if (t < T) and (U <= cif(t, P, mu, alpha, beta)):
+        if (b < total_count) and (U <= cif(t, P, mu, alpha, beta)):
             
             P = np.append(P, t)
+            b += 1
 
     return P
 
@@ -61,23 +61,15 @@ def multivariate_simulation(total_events, mu, alpha, beta):
     count = 0; s = 0
     
     while (count < total_points):
-        
         M = sum(multivariate_cif(s, T, mu, alpha, beta))
         s += np.random.exponential(1/M) 
-  
         D = np.random.uniform(0, M)
-        
-        if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):
-                        
+        if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):      
             k = 0
-            
-            while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):
-                            
+            while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):    
                 k += 1
-        
             n[k] += 1
             T[k] = np.append(T[k], s)
-            
             count +=1
                     
     return T
