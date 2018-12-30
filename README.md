@@ -1,7 +1,8 @@
 # Hawkes
-Hawkes Processes: Parameter estimation and simulation
+Multivariate Hawkes Processes parameter estimation and simulation
 
-Academic references:
+
+References:
 
 Abergel, F., M. Anane, A. Chakraborti, A. Jedidi, and I. M. Toke
 2016. Limit Order Books (Physics of Society: Econophysics and Sociophysics). Cambridge University
