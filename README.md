@@ -1,5 +1,5 @@
 # Hawkes
-## Multivariate Hawkes Processes parameter estimation and simulation
+### Multivariate Hawkes processes: parameter estimation and simulation
 
 
 Academic references:
