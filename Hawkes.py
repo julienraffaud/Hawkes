@@ -80,7 +80,6 @@ def multivariate_simulation(total_points, mu, alpha, beta):
         
             n[k] += 1
             T[k] = np.append(T[k], s)
-            
             count +=1
                     
     return T
