@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 
+
 def univariate_cif(t, times, mu, alpha, beta):
     
     " Conditional intensity function of a univariate Hawkes process with exponential kernel.       "
@@ -16,6 +17,7 @@ def univariate_cif(t, times, mu, alpha, beta):
     " - beta is the decay parameter, governing the exponential decay of intensity.                 "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, times[np.where(times<t)])))
+
 
 
 def univariate_simulation(total_points, mu, alpha, beta):
@@ -44,7 +46,8 @@ def univariate_simulation(total_points, mu, alpha, beta):
 
     return P
 
-    
+
+
 def multivariate_cif(t, times, mu, alpha, beta):
     
     ci = mu.copy()
@@ -56,6 +59,7 @@ def multivariate_cif(t, times, mu, alpha, beta):
             ci[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, times[j][np.where(times[j]<t)])))
             
     return ci
+
 
 
 def multivariate_simulation(total_points, mu, alpha, beta):
@@ -87,6 +91,7 @@ def multivariate_simulation(total_points, mu, alpha, beta):
     return T
 
 
+
 def pp_plot(t, mu, alpha, beta):
     
     "Plot the point process and conditional intensity function lambda*(t) "
@@ -112,6 +117,7 @@ def pp_plot(t, mu, alpha, beta):
 
     plt.show()
 
+    
 
 def ll(params, t, verbose=False):
     
@@ -141,6 +147,7 @@ def ll(params, t, verbose=False):
     s2 = sum(np.log(mu + alpha*A))
     
     return (mu*t[-1] - s1 - s2)
+
 
 
 def mle(t, verbose=False):
