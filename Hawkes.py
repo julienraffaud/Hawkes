@@ -89,35 +89,7 @@ def multivariate_simulation(total_points, mu, alpha, beta):
                     
     return T
 
-
-
-def pp_plot(t, mu, alpha, beta):
     
-    "Plot the point process and conditional intensity function lambda*(t) "
-    
-    x = np.linspace(0, t[-1], 1000)
-    ci = [univariate_cif(i, t, mu, alpha, beta) for i in x]
-    t = [round(i, 2) for i in t]
-    xx = [round(i, 2) for i in x]
-    xxx = [1 if (i in t) else np.nan for i in xx]
-    
-    plt.figure(1, figsize=(9, 4))
-    ax1 = plt.subplot(211)
-    ax2 = plt.subplot(212, sharex = ax1)
-    
-    ax1.plot(x, ci)
-    ax1.set_ylabel(r'$\lambda$*(t)')
-    ax1.set_xlabel('T')
-    plt.tight_layout()
-        
-    ax2.scatter(x, xxx, edgecolors='white', marker="o")
-    ax2.set_ylabel('Hawkes process')
-    ax2.set_xlabel('T')
-
-    plt.show()
-
-    
-
 def ll(params, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
@@ -164,3 +136,29 @@ def mle(t, verbose=False):
     
     # return estimated mu, alpha, beta
     return res.x[0], res.x[1], res.x[2]
+
+
+def pp_plot(t, mu, alpha, beta):
+    
+    "Plot the point process and conditional intensity function lambda*(t) "
+    
+    x = np.linspace(0, t[-1], 1000)
+    ci = [univariate_cif(i, t, mu, alpha, beta) for i in x]
+    t = [round(i, 2) for i in t]
+    xx = [round(i, 2) for i in x]
+    xxx = [1 if (i in t) else np.nan for i in xx]
+    
+    plt.figure(1, figsize=(9, 4))
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212, sharex = ax1)
+    
+    ax1.plot(x, ci)
+    ax1.set_ylabel(r'$\lambda$*(t)')
+    ax1.set_xlabel('T')
+    plt.tight_layout()
+        
+    ax2.scatter(x, xxx, edgecolors='white', marker="o")
+    ax2.set_ylabel('Hawkes process')
+    ax2.set_xlabel('T')
+
+    plt.show()
