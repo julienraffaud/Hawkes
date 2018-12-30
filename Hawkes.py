@@ -18,10 +18,9 @@ def univariate_cif(t, times, mu, alpha, beta):
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, times[np.where(times<t)])))
 
 
-
 def univariate_simulation(total_points, mu, alpha, beta):
     
-    "Ogata modified thinning algorithm to simulate univariate Hawkes processes "
+    "Ogata modified thinning algorithm to simulate univariate Hawkes processes. "
 
     e = 10**(-10)
     P = np.array([]); t = 0; count = 0
@@ -46,7 +45,6 @@ def univariate_simulation(total_points, mu, alpha, beta):
     return P
 
 
-
 def multivariate_cif(t, times, mu, alpha, beta):
     
     ci = mu.copy()
@@ -58,7 +56,6 @@ def multivariate_cif(t, times, mu, alpha, beta):
             ci[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, times[j][np.where(times[j]<t)])))
             
     return ci
-
 
 
 def multivariate_simulation(total_points, mu, alpha, beta):
@@ -90,7 +87,7 @@ def multivariate_simulation(total_points, mu, alpha, beta):
     return T
 
     
-def ll(params, t, verbose=False):
+def univariate_ll(params, t, verbose=False):
     
     " HP log-likelihood objective function.                                               "
     "                                                                                     "
@@ -120,12 +117,10 @@ def ll(params, t, verbose=False):
     return (mu*t[-1] - s1 - s2)
 
 
-
-def mle(t, verbose=False):
+def univariate_mle(t, verbose=False):
     
-    " Maximum-Likelihood Estimation for HP parameters "  
-    " given a sequence of observations.               "
-    
+    " Maximum-Likelihood Estimation for univariate HP parameters "  
+    " given a sequence of observations.                          "
     
     # generate random parameter estimates
     params = np.random.uniform(0,1,size=3)
