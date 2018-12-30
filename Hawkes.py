@@ -172,9 +172,9 @@ def multivariate_ll(m, seq, mu, alpha, beta):
     return T
 
 
-####################
-##      PLOT      ##
-####################
+###########################
+##      NICE PLOTS       ##
+###########################
 
 def pp_plot(t, mu, alpha, beta):
     
