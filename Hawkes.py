@@ -68,15 +68,14 @@ def multivariate_simulation(total_points, mu, alpha, beta):
         
         M = sum(multivariate_cif(s, T, mu, alpha, beta))
         s += np.random.exponential(1/M) 
-  
         D = np.random.uniform(0, M)
         
         if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):
-                        
+            
             k = 0
             
             while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):
-                            
+                
                 k += 1
         
             n[k] += 1
@@ -85,6 +84,25 @@ def multivariate_simulation(total_points, mu, alpha, beta):
             count +=1
                     
     return T
+
+
+def R(m, n, seq, mu, alpha, beta):
+    
+    n_iter = len(seq[m])
+    R = 0.
+                
+    for l in range(n_iter - 1):  
+        
+        if m != n:    
+            
+            a = np.exp(-beta[m, n]*(seq[m][l+1] - seq[m][l]))*R
+            b = sum(np.exp(-beta[m, n]*(np.subtract(seq[m][l+1], seq[n][np.where((seq[n] >= seq[m][l]) & (seq[n] < seq[m][l+1]))]))))
+            R += (a + b)
+            
+        else:
+            pass
+        
+    return R
 
     
 def univariate_ll(params, t, verbose=False):
