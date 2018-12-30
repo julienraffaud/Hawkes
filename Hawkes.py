@@ -172,6 +172,10 @@ def multivariate_ll(m, seq, mu, alpha, beta):
     return T
 
 
+####################
+##      PLOT      ##
+####################
+
 def pp_plot(t, mu, alpha, beta):
     
     "Plot the point process and conditional intensity function lambda*(t) "
