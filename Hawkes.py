@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 
-
 def univariate_cif(t, times, mu, alpha, beta):
     
     " Conditional intensity function of a univariate Hawkes process with exponential kernel.       "
