@@ -2,7 +2,7 @@
 Multivariate Hawkes Processes parameter estimation and simulation
 
 
-References:
+Academic references:
 
 Abergel, F., M. Anane, A. Chakraborti, A. Jedidi, and I. M. Toke
 2016. Limit Order Books (Physics of Society: Econophysics and Sociophysics). Cambridge University
