@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+#######################################
+##           SIMULATION              ##
+#######################################
 
 def univariate_cif(t, times, mu, alpha, beta):
     
@@ -84,6 +87,9 @@ def multivariate_simulation(total_points, mu, alpha, beta):
                     
     return T
 
+#######################
+##        MLE        ##
+#######################
 
 def univariate_ll(params, t, verbose=False):
     
