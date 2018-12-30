@@ -89,7 +89,7 @@ def multivariate_simulation(total_points, mu, alpha, beta):
     
 def univariate_ll(params, t, verbose=False):
     
-    " HP log-likelihood objective function.                                               "
+    " Univariate HP log-likelihood objective function.                                    "
     "                                                                                     "
     " The function is:                                                                    "
     " ll = -t[k]*mu + alpha/beta*sum(exp(-beta*(t[k] - t[i])-1) + ...                     "
@@ -135,7 +135,7 @@ def univariate_mle(t, verbose=False):
 
 def pp_plot(t, mu, alpha, beta):
     
-    "Plot the point process and conditional intensity function lambda*(t) "
+    "Plot univariate point process with conditional intensity function lambda*(t) "
     
     x = np.linspace(0, t[-1], 1000)
     ci = [univariate_cif(i, t, mu, alpha, beta) for i in x]
