@@ -3,19 +3,19 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 
-def univariate_cif(t, P, mu, alpha, beta):
+def univariate_cif(t, times, mu, alpha, beta):
     
     " Conditional intensity function of a univariate Hawkes process with exponential kernel.       "
     "                                                                                              "
     " The conditional intensity function is:                                                       "
-    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - t[i])))                                           "
+    " lambda*(t) = mu + sum(alpha*exp(-beta*(t - times[i])))                                       "
     "                                                                                              "
     " Parameters:                                                                                  "
     " - mu corresponds to the baseline intensity of the HP.                                        "
     " - alpha corresponds to the jump intensity, representing the jump in intensity upon arrival.  "
     " - beta is the decay parameter, governing the exponential decay of intensity.                 "
     
-    return mu + sum(alpha*np.exp(-beta*np.subtract(t, P[np.where(P<t)])))
+    return mu + sum(alpha*np.exp(-beta*np.subtract(t, times[np.where(times<t)])))
 
 
 def univariate_simulation(total_points, mu, alpha, beta):
@@ -23,30 +23,39 @@ def univariate_simulation(total_points, mu, alpha, beta):
     "Ogata modified thinning algorithm to simulate univariate Hawkes processes "
 
     e = 10**(-10)
-    P = np.array([]); t = 0; b = 0
+    P = np.array([]); t = 0; count = 0
 
-    while (b < total_points):
+    while (count < total_points):
+        
         # find new upper bound M
-        M = cif(t+e, P, mu, alpha, beta)
+        M = univariate_cif(t+e, P, mu, alpha, beta)
+        
         # generate next candidate point 
         E = -(1/M)*np.log(np.random.uniform(0, 1))
         t += E
+        
         # accept it with some probability: U[0, M]
         U = np.random.uniform(0, M)
-        if (b < total_points) and (U <= cif(t, P, mu, alpha, beta)):
+        
+        if (U <= univariate_cif(t, P, mu, alpha, beta)):
+            
             P = np.append(P, t)
-            b += 1
+            count += 1
 
     return P
 
-
-def multivariate_cif(t, T, mu, alpha, beta):
     
-    for i in range(len(mu)):
-        for j in range(len(mu)):
-            mu[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, T[j][np.where(T[j]<t)])))
+def multivariate_cif(t, times, mu, alpha, beta):
+    
+    ci = mu.copy()
+    
+    for i in range(len(ci)):
+        
+        for j in range(len(ci)):
             
-    return mu
+            ci[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, times[j][np.where(times[j]<t)])))
+            
+    return ci
 
 
 def multivariate_simulation(total_points, mu, alpha, beta):
@@ -56,18 +65,52 @@ def multivariate_simulation(total_points, mu, alpha, beta):
     count = 0; s = 0
     
     while (count < total_points):
+        
         M = sum(multivariate_cif(s, T, mu, alpha, beta))
         s += np.random.exponential(1/M) 
+  
         D = np.random.uniform(0, M)
-        if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):      
+        
+        if (D <= sum(multivariate_cif(s, T, mu, alpha, beta))):
+                        
             k = 0
-            while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):    
+            
+            while (D > sum(multivariate_cif(s, T, mu, alpha, beta)[:k+1])):
+                            
                 k += 1
+        
             n[k] += 1
             T[k] = np.append(T[k], s)
+            
             count +=1
                     
     return T
+
+
+def pp_plot(t, mu, alpha, beta):
+    
+    "Plot the point process and conditional intensity function lambda*(t) "
+    
+    x = np.linspace(0, t[-1], 1000)
+    ci = [univariate_cif(i, t, mu, alpha, beta) for i in x]
+    t = [round(i, 2) for i in t]
+    xx = [round(i, 2) for i in x]
+    xxx = [1 if (i in t) else np.nan for i in xx]
+    
+    plt.figure(1, figsize=(9, 4))
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212, sharex = ax1)
+    
+    ax1.plot(x, ci)
+    ax1.set_ylabel(r'$\lambda$*(t)')
+    ax1.set_xlabel('T')
+    plt.tight_layout()
+        
+    ax2.scatter(x, xxx, edgecolors='white', marker="o")
+    ax2.set_ylabel('Hawkes process')
+    ax2.set_xlabel('T')
+
+    plt.show()
 
 
 def ll(params, t, verbose=False):
@@ -115,29 +158,3 @@ def mle(t, verbose=False):
     
     # return estimated mu, alpha, beta
     return res.x[0], res.x[1], res.x[2]
-
-
-def pp_plot(t, mu, alpha, beta):
-    
-    "Plot the point process and conditional intensity function lambda*(t) "
-    
-    x = np.linspace(0, t[-1], 200)
-    ci = [cif(i, t, mu, alpha, beta) for i in x]
-    t = [round(i, 1) for i in t]
-    xx = [round(i, 1) for i in x]
-    xxx = [1 if (i in t) else np.nan for i in xx]
-    
-    plt.figure(1, figsize=(9, 4))
-    ax1 = plt.subplot(211)
-    ax2 = plt.subplot(212, sharex = ax1)
-    
-    ax1.plot(x, ci)
-    ax1.set_ylabel(r'$\lambda$*(t)')
-    ax1.set_xlabel('T')
-    plt.tight_layout()
-        
-    ax2.scatter(x, xxx, edgecolors='white')
-    ax2.set_ylabel('Hawkes process')
-    ax2.set_xlabel('T')
-
-    plt.show()
