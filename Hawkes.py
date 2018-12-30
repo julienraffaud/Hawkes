@@ -11,9 +11,9 @@ def univariate_cif(t, times, mu, alpha, beta):
     " lambda*(t) = mu + sum(alpha*exp(-beta*(t - times[i])))                                       "
     "                                                                                              "
     " Parameters:                                                                                  "
-    " - mu = the baseline intensity of the HP.                                                     "
-    " - alpha = the jump intensity, representing the jump in intensity upon arrival.               "
-    " - beta = the decay parameter, governing the exponential decay of intensity.                  "
+    " - mu = baseline intensity of the HP.                                                         "
+    " - alpha = jump intensity, representing the jump in intensity upon arrival.                   "
+    " - beta = decay parameter, governing the exponential decay of intensity.                      "
     
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, times[np.where(times<t)])))
 
