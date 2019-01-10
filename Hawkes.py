@@ -161,7 +161,7 @@ def ll_m(T, m, seq, mu, alpha, beta):
     return None
 
 #######################
-###   NICE PLOT     ###
+###      PLOT       ###
 #######################
     
     
