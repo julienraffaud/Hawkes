@@ -2,12 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
-#######################################
-##           SIMULATION              ##
-#######################################
+#######################
+###   SIMULATION    ###
+#######################
 
 def univariate_cif(t, times, mu, alpha, beta):
-    
     " Conditional intensity function of a univariate Hawkes process with exponential kernel.       "
     "                                                                                              "
     " The conditional intensity function is:                                                       "
@@ -21,14 +20,13 @@ def univariate_cif(t, times, mu, alpha, beta):
     return mu + sum(alpha*np.exp(-beta*np.subtract(t, times[np.where(times<t)])))
 
 
-def univariate_simulation(total_points, mu, alpha, beta):
-    
+def univariate_simulation(T, mu, alpha, beta):
     "Ogata modified thinning algorithm to simulate univariate Hawkes processes "
 
     e = 10**(-10)
     P = np.array([]); t = 0; count = 0
 
-    while (count < total_points):
+    while (t < T):
         
         # find new upper bound M
         M = univariate_cif(t+e, P, mu, alpha, beta)
@@ -41,10 +39,9 @@ def univariate_simulation(total_points, mu, alpha, beta):
         U = np.random.uniform(0, M)
         
         if (U <= univariate_cif(t, P, mu, alpha, beta)):
-            
             P = np.append(P, t)
             b += 1
-
+            
     return P
 
     
@@ -53,46 +50,44 @@ def multivariate_cif(t, times, mu, alpha, beta):
     ci = mu.copy()
     
     for i in range(len(ci)):
-        
         for j in range(len(ci)):
-            
             ci[i] += sum(alpha[i, j]*np.exp(-beta[i, j]*np.subtract(t, times[j][np.where(times[j]<t)])))
             
     return ci
 
 
-def multivariate_simulation(total_points, mu, alpha, beta):
+def multivariate_simulation(T, mu, alpha, beta):
         
-    T = [np.array([]) for _ in range(len(mu))]
+    P = [np.array([]) for _ in range(len(mu))]
     n = np.zeros((len(mu)))
     count = 0; t = 0
     
-    while (count < total_points):
+    while (t < T):
         
-        M = sum(multivariate_cif(t, T, mu, alpha, beta))
+        M = sum(multivariate_cif(t, P, mu, alpha, beta))
         t += np.random.exponential(1/M) 
         D = np.random.uniform(0, M)
         
-        if (D <= sum(multivariate_cif(t, T, mu, alpha, beta))):
+        if (D <= sum(multivariate_cif(t, P, mu, alpha, beta))):
                         
             k = 0
             
-            while (D > sum(multivariate_cif(t, T, mu, alpha, beta)[:k+1])):
+            while (D > sum(multivariate_cif(t, P, mu, alpha, beta)[:k+1])):
                             
                 k += 1
         
             n[k] += 1
-            T[k] = np.append(T[k], t)
+            P[k] = np.append(P[k], t)
             count +=1
                     
-    return T
+    return P
 
 #######################
-##        MLE        ##
+###       MLE       ###
 #######################
+
 
 def univariate_ll(params, t, verbose=False):
-    
     " Univariate HP log-likelihood objective function.                                    "
     "                                                                                     "
     " The function is:                                                                    "
@@ -110,15 +105,12 @@ def univariate_ll(params, t, verbose=False):
     mu, alpha, beta = params[0], params[1], params[2]
     
     # compute s1 
-    
     s1 = alpha/beta*sum(np.exp(-beta*(t[-1] - t))-1)
     
     # compute s2 
-    
     A = np.zeros((len(t),1))
     
     for i in range(1,len(t)):
-        
         A[i] = np.exp(-beta*(t[i] - t[i-1]))*(1+A[i-1])
         
     s2 = sum(np.log(mu + alpha*A))
@@ -127,7 +119,6 @@ def univariate_ll(params, t, verbose=False):
 
 
 def univariate_mle(t, verbose=False):
-    
     " Maximum-Likelihood Estimation for univariate HP parameters "  
     " given a sequence of observations.                          "
     
@@ -142,42 +133,39 @@ def univariate_mle(t, verbose=False):
     return res.x[0], res.x[1], res.x[2]
 
 
-def R(m, n, seq, mu, alpha, beta):
+def R(l, m, n, seq, mu, alpha, beta):
     
     if m != n:
     
         R = sum(np.exp(-beta[m, n]*np.subtract(seq[m][0], seq[n][np.where(seq[n] < seq[m][0])])))
                 
-        for l in range(len(seq[m]) - 1):
+        for i in range(l):
                    
-            a = np.exp(-beta[m, n]*(seq[m][l+1] - seq[m][l]))*R
-            b = sum(np.exp(-beta[m, n]*(np.subtract(seq[m][l+1], seq[n][np.where((seq[n] >= seq[m][l]) & (seq[n] < seq[m][l+1]))]))))
+            a = np.exp(-beta[m, n]*(seq[m][i+1] - seq[m][i]))*R
+            b = sum(np.exp(-beta[m, n]*(np.subtract(seq[m][i+1], seq[n][np.where((seq[n] >= seq[m][i]) & (seq[n] < seq[m][i+1]))]))))
             R += (a + b)
             
     else:
         
         R = np.exp(-beta[m, n]*seq[m][0])
         
-        for l in range(len(seq[m]) - 1):
+        for i in range(l):
             
-            R += np.exp(-beta[m, n]*(seq[m][l+1] - seq[m][l]))*(1+R)
+            R += np.exp(-beta[m, n]*(seq[m][i+1] - seq[m][i]))*(1+R)
         
     return R
 
 
-def multivariate_ll(m, seq, mu, alpha, beta):
+def ll_m(T, m, seq, mu, alpha, beta):
     
-    T =  max([max(i) for i in seq]) - sum([Y[i][j] for i in range(M) for j in range(N)])
+    return None
+
+#######################
+###   NICE PLOT     ###
+#######################
     
-    return T
-
-
-###########################
-##      NICE PLOTS       ##
-###########################
-
+    
 def pp_plot(t, mu, alpha, beta):
-    
     "Plot the point process and conditional intensity function lambda*(t) "
     
     x = np.linspace(0, t[-1], 1000)
