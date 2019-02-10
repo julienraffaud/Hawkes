@@ -155,11 +155,6 @@ def R(l, m, n, seq, mu, alpha, beta):
         
     return R
 
-
-def ll_m(T, m, seq, mu, alpha, beta):
-    
-    return None
-
 #######################
 ###      PLOT       ###
 #######################
